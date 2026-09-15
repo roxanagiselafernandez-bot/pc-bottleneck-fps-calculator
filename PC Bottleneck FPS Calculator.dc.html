@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;background:#08080a;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+    @keyframes pulseGlow{0%,100%{opacity:.55}50%{opacity:1}}
+    ::selection{background:rgba(0,255,136,.35);color:#fff}
+  </style>
+</helmet>
+
+<div style="max-width:430px;margin:0 auto;background:#0f0f13;min-height:100vh;position:relative;box-shadow:0 0 80px rgba(0,255,136,.06);overflow:hidden;border-left:1px solid rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.04)">
+
+  <div style="padding:22px 20px 16px;background:linear-gradient(180deg,#141419 0%,#0f0f13 100%);border-bottom:1px solid rgba(0,255,136,.1)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#00ff88,#00d2ff);display:flex;align-items:center;justify-content:center;font:800 16px 'Orbitron',sans-serif;color:#0f0f13;flex-shrink:0">PC</div>
+        <div>
+          <div style="font:800 15px 'Orbitron',sans-serif;color:#f4f4f6;letter-spacing:.3px;line-height:1.2">BOTTLENECK &amp; FPS</div>
+          <div style="font:600 11px 'Orbitron',sans-serif;color:#00ff88;letter-spacing:1.5px">CALCULATOR PRO</div>
+          <div style="font:500 9px 'Inter',sans-serif;color:#54545e;letter-spacing:.3px;margin-top:2px">Datos reales de hardware · act. {{ dataUpdatedLabel }}</div>
+        </div>
+      </div>
+      <div onClick="{{ toggleSettingsOpen }}" style="width:38px;height:38px;border-radius:10px;background:#1c1c24;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:17px">⚙️</div>
+    </div>
+  </div>
+
+  <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(5,5,7,.75);display:flex;align-items:center;justify-content:center;z-index:110;padding:20px">
+      <div style="background:#15151b;border:1px solid rgba(0,210,255,.3);border-radius:18px;padding:22px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <div style="font:800 14px 'Orbitron',sans-serif;color:#00d2ff;letter-spacing:.5px">AJUSTES</div>
+          <div onClick="{{ toggleSettingsOpen }}" style="cursor:pointer;color:#8b8b96;font:700 16px 'Inter',sans-serif">✕</div>
+        </div>
+
+        <div style="margin-bottom:18px">
+          <label style="display:block;font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-bottom:8px">MODO DE USO</label>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+            <sc-for list="{{ modeOptions }}" as="opt" hint-placeholder-count="2">
+              <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="padding:12px 0;border-top:1px solid rgba(255,255,255,.06)">
+          <div style="font:600 13px 'Inter',sans-serif;color:#f4f4f6;margin-bottom:2px">Reescalado DLSS / FSR</div>
+          <div style="font:500 11px 'Inter',sans-serif;color:#8b8b96;margin-bottom:10px">Perfil aplicado a todos los juegos</div>
+          <select value="{{ dlssProfile }}" onChange="{{ onDlssProfileChange }}" style="width:100%;box-sizing:border-box;padding:10px 14px;background:#1c1c24;border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#f4f4f6;font:600 13px 'Inter',sans-serif;outline:none;cursor:pointer">
+            <sc-for list="{{ dlssProfileOptions }}" as="opt" hint-placeholder-count="5">
+              <option value="{{ opt.value }}">{{ opt.label }}</option>
+            </sc-for>
+          </select>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid rgba(255,255,255,.06)">
+          <div>
+            <div style="font:600 13px 'Inter',sans-serif;color:#f4f4f6">Overclocking</div>
+            <div style="font:500 11px 'Inter',sans-serif;color:#8b8b96;margin-top:2px">+5% de rendimiento simulado</div>
+          </div>
+          <div onClick="{{ toggleOverclock }}" style="{{ ocSwitchStyle }}"><div style="{{ ocKnobStyle }}"></div></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="padding:18px 16px 110px;display:flex;flex-direction:column;gap:16px">
+
+    <div style="background:#15151b;border:1px solid rgba(0,210,255,.14);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+      <div style="font:700 12px 'Inter',sans-serif;color:#8b8b96;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Configuración de Hardware</div>
+
+      <div style="margin-bottom:14px;position:relative">
+        <label style="display:block;font:600 11px 'Inter',sans-serif;color:#00d2ff;letter-spacing:.5px;margin-bottom:6px">PROCESADOR (CPU)</label>
+        <div onClick="{{ toggleCpuOpen }}" style="display:flex;align-items:center;justify-content:space-between;background:#1c1c24;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;cursor:pointer">
+          <span style="font:600 14px 'Inter',sans-serif;color:#f4f4f6">{{ cpu }}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span style="font:600 11px 'Inter',sans-serif;color:#54545e">~US${{ cpuPrice }}</span>
+            <span style="color:#00d2ff;font-size:11px;transform:{{ cpuChevronTransform }}">▾</span>
+          </span>
+        </div>
+        <sc-if value="{{ cpuOpen }}">
+          <div style="position:absolute;top:100%;left:0;right:0;z-index:20;margin-top:6px;background:#1c1c24;border:1px solid rgba(0,210,255,.3);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.6);overflow:hidden">
+            <input value="{{ cpuQuery }}" onChange="{{ onCpuQueryChange }}" placeholder="Buscar CPU..." style="width:100%;box-sizing:border-box;padding:10px 14px;background:#141419;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#f4f4f6;font:500 13px 'Inter',sans-serif;outline:none" />
+            <div style="max-height:200px;overflow-y:auto">
+              <sc-for list="{{ filteredCpuList }}" as="item" hint-placeholder-count="4">
+                <div onClick="{{ item.onClick }}" style="padding:10px 14px;font:500 13px 'Inter',sans-serif;color:#d8d8de;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)" style-hover="background:rgba(0,210,255,.1);color:#fff">{{ item.name }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-bottom:16px;position:relative">
+        <label style="display:block;font:600 11px 'Inter',sans-serif;color:#00ff88;letter-spacing:.5px;margin-bottom:6px">TARJETA DE VIDEO (GPU)</label>
+        <div onClick="{{ toggleGpuOpen }}" style="display:flex;align-items:center;justify-content:space-between;background:#1c1c24;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px;cursor:pointer">
+          <span style="font:600 14px 'Inter',sans-serif;color:#f4f4f6">{{ gpu }}</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span style="font:600 11px 'Inter',sans-serif;color:#54545e">~US${{ gpuPrice }}</span>
+            <span style="color:#00ff88;font-size:11px;transform:{{ gpuChevronTransform }}">▾</span>
+          </span>
+        </div>
+        <sc-if value="{{ gpuOpen }}">
+          <div style="position:absolute;top:100%;left:0;right:0;z-index:20;margin-top:6px;background:#1c1c24;border:1px solid rgba(0,255,136,.3);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.6);overflow:hidden">
+            <input value="{{ gpuQuery }}" onChange="{{ onGpuQueryChange }}" placeholder="Buscar GPU..." style="width:100%;box-sizing:border-box;padding:10px 14px;background:#141419;border:none;border-bottom:1px solid rgba(255,255,255,.08);color:#f4f4f6;font:500 13px 'Inter',sans-serif;outline:none" />
+            <div style="max-height:200px;overflow-y:auto">
+              <sc-for list="{{ filteredGpuList }}" as="item" hint-placeholder-count="4">
+                <div onClick="{{ item.onClick }}" style="padding:10px 14px;font:500 13px 'Inter',sans-serif;color:#d8d8de;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)" style-hover="background:rgba(0,255,136,.1);color:#fff">{{ item.name }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label style="display:block;font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-bottom:6px">MEMORIA RAM</label>
+        <select value="{{ ramId }}" onChange="{{ onRamChange }}" style="width:100%;box-sizing:border-box;padding:12px 14px;background:#1c1c24;border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#f4f4f6;font:600 14px 'Inter',sans-serif;outline:none;cursor:pointer">
+          <sc-for list="{{ ramOptions }}" as="opt" hint-placeholder-count="5">
+            <option value="{{ opt.value }}">{{ opt.label }}</option>
+          </sc-for>
+        </select>
+        <sc-if value="{{ ramInsufficient }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:8px;background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.4);border-radius:10px;padding:12px;font:600 12px/1.5 'Inter',sans-serif;color:#ffd60a">
+            ⚠️ RAM justa para AAA: se recomiendan 16GB o más para evitar stuttering en juegos exigentes.
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label style="display:block;font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-bottom:6px">RESOLUCIÓN</label>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <sc-for list="{{ resOptions }}" as="opt" hint-placeholder-count="3">
+            <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="border-top:1px dashed rgba(255,255,255,.1);padding-top:14px;margin-top:2px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <span style="font:700 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:1px;text-transform:uppercase">Mi PC Completa (opcional)</span>
+          <div onClick="{{ toggleFullPc }}" style="{{ fullPcSwitchStyle }}"><div style="{{ fullPcKnobStyle }}"></div></div>
+        </div>
+        <sc-if value="{{ fullPcOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;background:#1c1c24;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 14px">
+              <div>
+                <div style="font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px">VRAM DE LA GPU</div>
+                <div style="font:500 11px 'Inter',sans-serif;color:#54545e;margin-top:2px">Ficha técnica real de {{ gpu }}</div>
+              </div>
+              <span style="font:800 18px 'Orbitron',sans-serif;color:#00ff88">{{ gpuVram }}GB</span>
+            </div>
+            <sc-if value="{{ vramInsufficient }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.4);border-radius:10px;padding:12px;font:600 12px/1.5 'Inter',sans-serif;color:#ff8fa3">
+                ⚠️ VRAM Insuficiente: {{ gpu }} tiene {{ gpuVram }}GB, por debajo de los {{ vramThreshold }}GB recomendados para esta resolución.
+              </div>
+            </sc-if>
+            <div>
+              <label style="display:block;font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-bottom:6px">ALMACENAMIENTO</label>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ storageOptions }}" as="opt" hint-placeholder-count="3">
+                  <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ storageStutterWarning }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(255,214,10,.1);border:1px solid rgba(255,214,10,.4);border-radius:10px;padding:12px;font:600 12px/1.5 'Inter',sans-serif;color:#ffd60a">
+                ⚠️ Stuttering/Tirones esperados: un HDD 7200 RPM es lento para streaming de assets en juegos AAA.
+              </div>
+            </sc-if>
+            <div>
+              <label style="display:block;font:600 11px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-bottom:6px">FUENTE DE PODER (PSU)</label>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <sc-for list="{{ psuOptions }}" as="opt" hint-placeholder-count="5">
+                  <div onClick="{{ opt.onClick }}" style="{{ opt.style }}">{{ opt.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+            <sc-if value="{{ psuInsufficient }}" hint-placeholder-val="{{ false }}">
+              <div style="background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.4);border-radius:10px;padding:12px;font:600 12px/1.5 'Inter',sans-serif;color:#ff8fa3">
+                ⚠️ Tu PSU de {{ psuWattage }}W puede ser insuficiente para {{ gpu }} (recomendado: {{ psuRecommended }}W+).
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="background:#15151b;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center">
+      <div style="font:700 12px 'Inter',sans-serif;color:#8b8b96;letter-spacing:1px;text-transform:uppercase;align-self:flex-start;margin-bottom:14px">Medidor de Cuello de Botella</div>
+      <div style="width:170px;height:170px;border-radius:50%;background:{{ gaugeBackground }};display:flex;align-items:center;justify-content:center;position:relative;box-shadow:{{ gaugeGlow }}">
+        <div style="width:132px;height:132px;border-radius:50%;background:#15151b;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div style="font:800 34px 'Orbitron',sans-serif;color:{{ bottleneckColor }}">{{ bottleneckPercent }}%</div>
+          <div style="font:600 10px 'Inter',sans-serif;color:#8b8b96;letter-spacing:.5px;margin-top:2px">DESBALANCE</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:8px 18px;border-radius:999px;background:{{ bottleneckBadgeBg }};border:1px solid {{ bottleneckColor }}">
+        <span style="font:700 13px 'Inter',sans-serif;color:{{ bottleneckColor }};letter-spacing:.3px">{{ bottleneckLabel }}</span>
+      </div>
+    </div>
+
+    <div style="background:#15151b;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.4)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <span style="font:700 12px 'Inter',sans-serif;color:#8b8b96;letter-spacing:1px;text-transform:uppercase">FPS Estimados por Juego</span>
+        <span style="font:500 9px 'Inter',sans-serif;color:#54545e">Score real por resolución + specs de fábrica</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+        <sc-for list="{{ categoryTabs }}" as="cat" hint-placeholder-count="2">
+          <div onClick="{{ cat.onClick }}" style="{{ cat.style }}">{{ cat.label }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ gamesComputed }}" as="game" hint-placeholder-count="3">
+          <div style="background:#1c1c24;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font:600 14px 'Inter',sans-serif;color:#f4f4f6">{{ game.name }}</span>
+              <span style="font:800 22px 'Orbitron',sans-serif;color:{{ game.color }}">{{ game.fps }} <span style="font:600 11px 'Inter',sans-serif;color:#8b8b96">FPS</span></span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <sc-for list="{{ game.tabs }}" as="tab" hint-placeholder-count="3">
+                <div onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(0,255,136,.08),rgba(0,210,255,.08));border:1px solid rgba(0,255,136,.25);border-radius:18px;padding:18px">
+      <div style="font:700 12px 'Inter',sans-serif;color:#00ff88;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Recomendación de Upgrade</div>
+      <div style="font:500 14px/1.5 'Inter',sans-serif;color:#e4e4e9">{{ upgradeText }}</div>
+    </div>
+
+    <a href="{{ benchmarkSearchUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;background:#1c1c24;border:1px solid rgba(0,210,255,.3);color:#00d2ff;font:700 13px 'Inter',sans-serif;text-decoration:none;letter-spacing:.3px">
+      🔍 Buscar pruebas reales en la web (TechPowerUp / Tom's Hardware)
+    </a>
+
+    <div onClick="{{ startProAnalysis }}" style="{{ proButtonStyle }}">
+      <span style="font:800 14px 'Inter',sans-serif;letter-spacing:.4px">{{ proButtonLabel }}</span>
+      <span style="font:700 9px 'Inter',sans-serif;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:5px;letter-spacing:1px">AD</span>
+    </div>
+
+  </div>
+
+  <div style="position:sticky;bottom:0;left:0;right:0;background:#0a0a0c;border-top:1px dashed rgba(255,255,255,.15);padding:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+    <span style="font:600 11px 'Inter',sans-serif;color:#54545e;letter-spacing:.5px">ESPACIO PUBLICITARIO · 320×50</span>
+    <span style="font:700 9px 'Inter',sans-serif;color:#3a3a42;border:1px solid #3a3a42;padding:1px 6px;border-radius:4px">AD</span>
+  </div>
+
+  <sc-if value="{{ proModalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(5,5,7,.75);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px">
+      <div style="background:#15151b;border:1px solid rgba(0,255,136,.3);border-radius:18px;padding:22px;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="font:800 14px 'Orbitron',sans-serif;color:#00ff88;letter-spacing:.5px">ANÁLISIS PRO</div>
+          <div onClick="{{ closeProModal }}" style="cursor:pointer;color:#8b8b96;font:700 16px 'Inter',sans-serif">✕</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1c1c24;border-radius:10px">
+            <span style="font:500 13px 'Inter',sans-serif;color:#8b8b96">FPS Promedio</span>
+            <span style="font:700 13px 'Inter',sans-serif;color:#f4f4f6">{{ modalAvgFps }} FPS</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1c1c24;border-radius:10px">
+            <span style="font:500 13px 'Inter',sans-serif;color:#8b8b96">1% Low FPS</span>
+            <span style="font:700 13px 'Inter',sans-serif;color:#ffd60a">{{ modalLow1Fps }} FPS</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1c1c24;border-radius:10px">
+            <span style="font:500 13px 'Inter',sans-serif;color:#8b8b96">Consumo Estimado</span>
+            <span style="font:700 13px 'Inter',sans-serif;color:#00d2ff">{{ modalWattage }} W</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 12px;background:#1c1c24;border-radius:10px">
+            <span style="font:500 13px 'Inter',sans-serif;color:#8b8b96">Temperatura Estimada</span>
+            <span style="font:700 13px 'Inter',sans-serif;color:#ff9d4d">{{ modalTemps }}</span>
+          </div>
+        </div>
+        <div onClick="{{ closeProModal }}" style="margin-top:16px;text-align:center;padding:12px;border-radius:10px;background:linear-gradient(135deg,#00ff88,#00d2ff);color:#0f0f13;font:800 13px 'Inter',sans-serif;letter-spacing:.4px;cursor:pointer">CERRAR</div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    cpuId: 'r7_7800x3d',
+    gpuId: 'rtx_4070_12gb',
+    ramId: 'ddr5_32gb_6000',
+    storageId: 'ssd_nvme_gen4_1tb',
+    resolution: '1440p QHD',
+    cpuOpen: false, gpuOpen: false,
+    cpuQuery: '', gpuQuery: '',
+    quality: { cs2: 'Media', valorant: 'Media', fortnite: 'Media', warzone: 'Media', lol: 'Media', cp2077: 'Media', spiderman: 'Media', gtav: 'Media', wukong: 'Media', rdr2: 'Media' },
+    category: 'Esports',
+    settingsOpen: false, mode: 'Gamer', dlssProfile: 'Desactivado', overclock: false,
+    fullPcOpen: false, psu: '650W',
+    proStatus: 'idle', proModalOpen: false,
+    dataUpdatedLabel: '—'
+  };
+
+  // Catálogo real (specs + precio de referencia + score relativo 0-100 por resolución).
+  // Se sobrescribe en componentDidMount() con hardware.json remoto (actualizado semanalmente).
+  cpuData = [
+    { id: 'r5_4500', name: 'AMD Ryzen 5 4500', score_1080p: 62, score_1440p: 72, cores: 6, threads: 12, tdp_watts: 65, price_usd: 75 },
+    { id: 'r5_5600', name: 'AMD Ryzen 5 5600', score_1080p: 80, score_1440p: 85, cores: 6, threads: 12, tdp_watts: 65, price_usd: 125 },
+    { id: 'r7_5700x3d', name: 'AMD Ryzen 7 5700X3D', score_1080p: 94, score_1440p: 96, cores: 8, threads: 16, tdp_watts: 105, price_usd: 210 },
+    { id: 'r7_7800x3d', name: 'AMD Ryzen 7 7800X3D', score_1080p: 100, score_1440p: 100, cores: 8, threads: 16, tdp_watts: 120, price_usd: 380 },
+    { id: 'i5_12400f', name: 'Intel Core i5-12400F', score_1080p: 78, score_1440p: 83, cores: 6, threads: 12, tdp_watts: 65, price_usd: 110 },
+    { id: 'i5_13600k', name: 'Intel Core i5-13600K', score_1080p: 93, score_1440p: 95, cores: 14, threads: 20, tdp_watts: 125, price_usd: 270 },
+    { id: 'i7_14700k', name: 'Intel Core i7-14700K', score_1080p: 97, score_1440p: 98, cores: 20, threads: 28, tdp_watts: 125, price_usd: 390 }
+  ];
+
+  gpuData = [
+    { id: 'rtx_3050_8gb', name: 'NVIDIA GeForce RTX 3050 8GB', vram_gb: 8, score_1080p: 55, score_1440p: 38, score_4k: 20, tdp_watts: 130, price_usd: 190 },
+    { id: 'rtx_4060_8gb', name: 'NVIDIA GeForce RTX 4060 8GB', vram_gb: 8, score_1080p: 82, score_1440p: 62, score_4k: 35, tdp_watts: 115, price_usd: 290 },
+    { id: 'rtx_4070_12gb', name: 'NVIDIA GeForce RTX 4070 12GB', vram_gb: 12, score_1080p: 96, score_1440p: 90, score_4k: 68, tdp_watts: 200, price_usd: 540 },
+    { id: 'rtx_4080_super', name: 'NVIDIA GeForce RTX 4080 Super 16GB', vram_gb: 16, score_1080p: 100, score_1440p: 99, score_4k: 92, tdp_watts: 320, price_usd: 970 },
+    { id: 'rx_6600_8gb', name: 'AMD Radeon RX 6600 8GB', vram_gb: 8, score_1080p: 68, score_1440p: 48, score_4k: 25, tdp_watts: 132, price_usd: 200 },
+    { id: 'rx_7600_8gb', name: 'AMD Radeon RX 7600 8GB', vram_gb: 8, score_1080p: 78, score_1440p: 56, score_4k: 30, tdp_watts: 165, price_usd: 260 },
+    { id: 'rx_7800_xt', name: 'AMD Radeon RX 7800 XT 16GB', vram_gb: 16, score_1080p: 94, score_1440p: 88, score_4k: 65, tdp_watts: 263, price_usd: 490 }
+  ];
+
+  ramData = [
+    { id: 'ddr4_8gb_3200', name: '8GB DDR4 3200MHz', type: 'DDR4', capacity_gb: 8, speed_mhz: 3200, price_usd: 22 },
+    { id: 'ddr4_16gb_3200', name: '16GB (2x8GB) DDR4 3200MHz', type: 'DDR4', capacity_gb: 16, speed_mhz: 3200, price_usd: 40 },
+    { id: 'ddr4_32gb_3600', name: '32GB (2x16GB) DDR4 3600MHz', type: 'DDR4', capacity_gb: 32, speed_mhz: 3600, price_usd: 75 },
+    { id: 'ddr5_16gb_5600', name: '16GB (2x8GB) DDR5 5600MHz', type: 'DDR5', capacity_gb: 16, speed_mhz: 5600, price_usd: 65 },
+    { id: 'ddr5_32gb_6000', name: '32GB (2x16GB) DDR5 6000MHz CL30', type: 'DDR5', capacity_gb: 32, speed_mhz: 6000, price_usd: 110 }
+  ];
+
+  storageData = [
+    { id: 'hdd_1tb', name: 'HDD 1TB 7200 RPM', type: 'HDD', stutter_warning: true, speed_mbps: 150, price_usd: 40 },
+    { id: 'ssd_sata_1tb', name: 'SSD SATA III 1TB', type: 'SATA_SSD', stutter_warning: false, speed_mbps: 550, price_usd: 60 },
+    { id: 'ssd_nvme_gen4_1tb', name: 'SSD M.2 NVMe Gen4 1TB', type: 'NVME_SSD', stutter_warning: false, speed_mbps: 7000, price_usd: 85 }
+  ];
+
+  validationRules = { min_psu_headroom_watts: 100, vram_warning_4k_threshold_gb: 10, vram_warning_1440p_threshold_gb: 8 };
+
+  games = [
+    { key: 'cs2', name: 'CS2', base: 400, category: 'Esports' },
+    { key: 'valorant', name: 'Valorant', base: 350, category: 'Esports' },
+    { key: 'fortnite', name: 'Fortnite', base: 200, category: 'Esports' },
+    { key: 'warzone', name: 'Warzone', base: 140, category: 'Esports' },
+    { key: 'lol', name: 'League of Legends', base: 300, category: 'Esports' },
+    { key: 'cp2077', name: 'Cyberpunk 2077', base: 90, category: 'AAA' },
+    { key: 'spiderman', name: 'Spider-Man', base: 110, category: 'AAA' },
+    { key: 'gtav', name: 'GTA V', base: 150, category: 'AAA' },
+    { key: 'wukong', name: 'Black Myth: Wukong', base: 70, category: 'AAA' },
+    { key: 'rdr2', name: 'Red Dead Redemption 2', base: 95, category: 'AAA' }
+  ];
+
+  HARDWARE_JSON_URL = 'https://raw.githubusercontent.com/roxanagiselafernandez-bot/pc-bottleneck-fps-calculator/main/hardware.json';
+
+  componentDidMount() {
+    this.fetchHardwareData();
+  }
+
+  // Carga el catálogo real desde GitHub (hardware.json, refrescado semanalmente por Actions).
+  // Si falla la red, se queda con los datos locales embebidos arriba.
+  fetchHardwareData = async () => {
+    try {
+      const res = await fetch(this.HARDWARE_JSON_URL, { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (Array.isArray(data.cpus) && data.cpus.length) this.cpuData = data.cpus;
+      if (Array.isArray(data.gpus) && data.gpus.length) this.gpuData = data.gpus;
+      if (Array.isArray(data.ram) && data.ram.length) this.ramData = data.ram;
+      if (Array.isArray(data.storage) && data.storage.length) this.storageData = data.storage;
+      if (data.validation_rules) this.validationRules = data.validation_rules;
+      const label = data.last_updated ? new Date(data.last_updated).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' }) : null;
+      this.setState({ dataUpdatedLabel: label || 'local' });
+    } catch (e) {
+      console.warn('[hardware.json] no se pudo obtener datos remotos, usando snapshot local:', e && e.message ? e.message : e);
+      this.setState({ dataUpdatedLabel: 'local' });
+    }
+  };
+
+  // Score real de CPU/GPU en la resolución elegida (0-100, ya viene calibrado por resolución
+  // en el catálogo — no hace falta ninguna curva sintética de "caída por resolución").
+  cpuScoreAt(cpu, resolution) {
+    return resolution === '1080p FHD' ? cpu.score_1080p : cpu.score_1440p;
+  }
+  gpuScoreAt(gpu, resolution) {
+    if (resolution === '1080p FHD') return gpu.score_1080p;
+    if (resolution === '1440p QHD') return gpu.score_1440p;
+    return gpu.score_4k;
+  }
+
+  resWeights = {
+    '1080p FHD': { cpu: 0.55, gpu: 0.45 },
+    '1440p QHD': { cpu: 0.35, gpu: 0.65 },
+    '4K UHD': { cpu: 0.2, gpu: 0.8 }
+  };
+
+  qualityMult = { Baja: 1.4, Media: 1.0, Ultra: 0.7 };
+  modeMult = { Gamer: 1.0, Streamer: 0.85 };
+  psuOptionsList = ['450W', '550W', '650W', '750W', '850W+'];
+  dlssProfileMult = { 'Desactivado': 1.0, 'Calidad (+25%)': 1.25, 'Equilibrado (+40%)': 1.40, 'Rendimiento (+55%)': 1.55, 'Frame Gen (+80%)': 1.80 };
+
+  toggleCpuOpen = () => this.setState(s => ({ cpuOpen: !s.cpuOpen, gpuOpen: false }));
+  toggleGpuOpen = () => this.setState(s => ({ gpuOpen: !s.gpuOpen, cpuOpen: false }));
+  selectCpu = (id) => this.setState({ cpuId: id, cpuOpen: false, cpuQuery: '' });
+  selectGpu = (id) => this.setState({ gpuId: id, gpuOpen: false, gpuQuery: '' });
+  setGameQuality = (key, q) => this.setState(s => ({ quality: { ...s.quality, [key]: q } }));
+  setCategory = (c) => this.setState({ category: c });
+  toggleSettingsOpen = () => this.setState(s => ({ settingsOpen: !s.settingsOpen }));
+  setMode = (m) => this.setState({ mode: m });
+  setDlssProfile = (p) => this.setState({ dlssProfile: p });
+  toggleOverclock = () => this.setState(s => ({ overclock: !s.overclock }));
+  toggleFullPc = () => this.setState(s => ({ fullPcOpen: !s.fullPcOpen }));
+  setStorage = (id) => this.setState({ storageId: id });
+  setPsu = (v) => this.setState({ psu: v });
+  setRam = (id) => this.setState({ ramId: id });
+
+  switchStyle(active, accent) {
+    return `width:44px;height:24px;border-radius:999px;cursor:pointer;background:${active ? accent : '#2a2a33'};position:relative;transition:background .2s;flex-shrink:0`;
+  }
+  knobStyle(active) {
+    return `width:18px;height:18px;border-radius:50%;background:#0f0f13;position:absolute;top:3px;left:${active ? '23px' : '3px'};transition:left .2s`;
+  }
+
+  startProAnalysis = () => {
+    if (this.state.proStatus === 'loading') return;
+    this.setState({ proStatus: 'loading' });
+    setTimeout(() => this.setState({ proStatus: 'done', proModalOpen: true }), 1600);
+  };
+  closeProModal = () => this.setState({ proModalOpen: false, proStatus: 'idle' });
+
+  segStyle(active, accent) {
+    return active
+      ? `text-align:center;padding:9px 4px;border-radius:8px;font:700 12px 'Inter',sans-serif;cursor:pointer;background:${accent};color:#0f0f13;border:1px solid ${accent}`
+      : `text-align:center;padding:9px 4px;border-radius:8px;font:600 12px 'Inter',sans-serif;cursor:pointer;background:#1c1c24;color:#c4c4cc;border:1px solid rgba(255,255,255,.08)`;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const cpu = this.cpuData.find(c => c.id === s.cpuId) || this.cpuData[0];
+    const gpu = this.gpuData.find(g => g.id === s.gpuId) || this.gpuData[0];
+    const ram = this.ramData.find(r => r.id === s.ramId) || this.ramData[0];
+    const storage = this.storageData.find(st => st.id === s.storageId) || this.storageData[0];
+    const rules = this.validationRules;
+    const w = this.resWeights[s.resolution];
+    const cpuScore = this.cpuScoreAt(cpu, s.resolution);
+    const gpuScore = this.gpuScoreAt(gpu, s.resolution);
+
+    const diff = gpuScore - cpuScore;
+    const maxScore = Math.max(cpuScore, gpuScore, 1);
+    const bottleneckPercent = Math.min(100, Math.round(Math.abs(diff) / maxScore * 100));
+    const bottleneckType = diff > 0 ? 'CPU' : diff < 0 ? 'GPU' : 'Ninguno';
+    const severity = bottleneckPercent < 10 ? 'Equilibrado' : bottleneckPercent < 25 ? 'Leve' : 'Severo';
+    const bottleneckColor = severity === 'Equilibrado' ? '#00ff88' : severity === 'Leve' ? '#ffd60a' : '#ff3b5c';
+    const bottleneckLabel = severity === 'Equilibrado' ? 'SISTEMA EQUILIBRADO' : `CUELLO DE ${bottleneckType} · ${severity.toUpperCase()}`;
+    const gaugeDeg = Math.max(4, bottleneckPercent * 3.6);
+    const gaugeBackground = `conic-gradient(${bottleneckColor} 0deg ${gaugeDeg}deg, rgba(255,255,255,.06) ${gaugeDeg}deg 360deg)`;
+    const gaugeGlow = `0 0 30px ${bottleneckColor}55`;
+    const bottleneckBadgeBg = bottleneckColor + '1a';
+
+    // Bonus real por velocidad de RAM: kits más rápidos alimentan mejor a CPUs con IMC exigente (±8% sobre el kit más lento del catálogo).
+    const maxRamSpeed = Math.max(...this.ramData.map(r => r.speed_mhz));
+    const minRamSpeed = Math.min(...this.ramData.map(r => r.speed_mhz));
+    const ramMult = 0.96 + ((ram.speed_mhz - minRamSpeed) / (maxRamSpeed - minRamSpeed || 1)) * 0.08;
+    const perfMult = this.modeMult[s.mode] * (s.overclock ? 1.05 : 1) * ramMult;
+    const dlssMult = this.dlssProfileMult[s.dlssProfile];
+    const gamesComputed = this.games
+      .filter(g => g.category === s.category)
+      .map(g => {
+        // Los scores ya están calibrados por resolución en el catálogo (no hace falta una curva sintética de "caída por resolución").
+        const combined = (cpuScore * w.cpu + gpuScore * w.gpu) * perfMult;
+        const q = s.quality[g.key];
+        const fpsBase = g.base * (combined / 100) * this.qualityMult[q];
+        const fps = Math.max(15, Math.round(fpsBase * dlssMult));
+        const color = fps >= 60 ? '#00ff88' : fps >= 30 ? '#ffd60a' : '#ff3b5c';
+        const tabs = ['Baja', 'Media', 'Ultra'].map(t => ({
+          label: t, style: this.segStyle(t === q, '#00d2ff'), onClick: () => this.setGameQuality(g.key, t)
+        }));
+        return { key: g.key, name: g.name, fps, color, tabs };
+      });
+
+    let upgradeText;
+    if (severity === 'Equilibrado') {
+      upgradeText = `Tu PC está bien balanceada para ${s.resolution} (desbalance de solo ${bottleneckPercent}%). Si buscas más rendimiento, considera subir de resolución o mejorar tu monitor.`;
+    } else if (bottleneckType === 'CPU') {
+      const suggestion = this.cpuData.filter(c => this.cpuScoreAt(c, s.resolution) > cpuScore).sort((a, b) => this.cpuScoreAt(a, s.resolution) - this.cpuScoreAt(b, s.resolution))[0] || this.cpuData[0];
+      upgradeText = `Tu ${gpu.name} está limitada un ${bottleneckPercent}% por el procesador. Actualiza a un ${suggestion.name} (US$${suggestion.price_usd}) para liberar todo su potencial.`;
+    } else {
+      const suggestion = this.gpuData.filter(g => this.gpuScoreAt(g, s.resolution) > gpuScore).sort((a, b) => this.gpuScoreAt(a, s.resolution) - this.gpuScoreAt(b, s.resolution))[0] || this.gpuData[0];
+      upgradeText = `Tu ${cpu.name} está siendo limitado un ${bottleneckPercent}% por la tarjeta gráfica. Actualiza a una ${suggestion.name} (US$${suggestion.price_usd}) para aprovechar mejor tu CPU.`;
+    }
+
+    const avgFps = Math.round(gamesComputed.reduce((a, b) => a + b.fps, 0) / gamesComputed.length);
+    const modalLow1Fps = Math.round(avgFps * 0.62);
+    // Consumo real: TDP de fábrica de CPU + GPU (no una estimación sintética).
+    const modalWattage = cpu.tdp_watts + gpu.tdp_watts;
+    const modalTemps = `${Math.round(45 + (gpu.tdp_watts / 350) * 35)}°C GPU / ${Math.round(40 + (cpu.tdp_watts / 130) * 30)}°C CPU`;
+
+    const resOptions = ['1080p FHD', '1440p QHD', '4K UHD'].map(r => ({
+      label: r, style: this.segStyle(r === s.resolution, '#00d2ff'), onClick: () => this.setState({ resolution: r })
+    }));
+
+    const filteredCpuList = this.cpuData
+      .filter(c => c.name.toLowerCase().includes(s.cpuQuery.toLowerCase()))
+      .map(c => ({ name: c.name, onClick: () => this.selectCpu(c.id) }));
+    const filteredGpuList = this.gpuData
+      .filter(g => g.name.toLowerCase().includes(s.gpuQuery.toLowerCase()))
+      .map(g => ({ name: g.name, onClick: () => this.selectGpu(g.id) }));
+
+    const proButtonLabel = s.proStatus === 'loading' ? 'CARGANDO ANÁLISIS...' : '▶ ANÁLISIS PRO DETALLADO (VER VIDEO)';
+    const proButtonStyle = `display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;border-radius:14px;cursor:pointer;background:${s.proStatus === 'loading' ? '#2a2a33' : 'linear-gradient(135deg,#00ff88,#00d2ff)'};color:${s.proStatus === 'loading' ? '#8b8b96' : '#0f0f13'};box-shadow:${s.proStatus === 'loading' ? 'none' : '0 8px 24px rgba(0,255,136,.25)'}`;
+
+    const modeOptions = ['Gamer', 'Streamer'].map(m => ({
+      label: m, style: this.segStyle(m === s.mode, '#00d2ff'), onClick: () => this.setMode(m)
+    }));
+    const dlssProfileOptions = Object.keys(this.dlssProfileMult).map(p => ({ value: p, label: p }));
+    const onDlssProfileChange = (e) => this.setDlssProfile(e.target.value);
+
+    const ramOptions = this.ramData.map(r => ({ value: r.id, label: r.name }));
+    const onRamChange = (e) => this.setRam(e.target.value);
+    const ramInsufficient = ram.capacity_gb < 16 && s.category === 'AAA';
+
+    const gpuVram = gpu.vram_gb;
+    const vram4kWarning = s.resolution === '4K UHD' && gpuVram < rules.vram_warning_4k_threshold_gb;
+    const vram1440pWarning = s.resolution === '1440p QHD' && gpuVram < rules.vram_warning_1440p_threshold_gb;
+    const vramInsufficient = vram4kWarning || vram1440pWarning;
+    const vramThreshold = vram4kWarning ? rules.vram_warning_4k_threshold_gb : rules.vram_warning_1440p_threshold_gb;
+
+    const storageOptions = this.storageData.map(st => ({
+      label: st.name, style: this.segStyle(st.id === s.storageId, '#00ff88'), onClick: () => this.setStorage(st.id)
+    }));
+    const storageStutterWarning = storage.stutter_warning && s.category === 'AAA';
+    const psuOptions = this.psuOptionsList.map(v => ({
+      label: v, style: this.segStyle(v === s.psu, '#00d2ff'), onClick: () => this.setPsu(v)
+    }));
+    const categoryTabs = ['Esports', 'AAA'].map(c => ({
+      label: c === 'Esports' ? 'Competitivos / Esports' : 'Exigentes / AAA',
+      style: this.segStyle(c === s.category, '#00ff88'), onClick: () => this.setCategory(c)
+    }));
+
+    const psuWattage = parseInt(s.psu, 10);
+    // PSU recomendada real: TDP de CPU + TDP de GPU + margen de seguridad (validation_rules).
+    const psuRecommended = cpu.tdp_watts + gpu.tdp_watts + rules.min_psu_headroom_watts;
+    const psuInsufficient = psuWattage < psuRecommended;
+
+    const benchmarkSearchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(`${cpu.name} ${gpu.name} benchmark FPS TechPowerUp Tom's Hardware`);
+
+    return {
+      settingsOpen: s.settingsOpen, toggleSettingsOpen: this.toggleSettingsOpen,
+      modeOptions, dlssProfile: s.dlssProfile, dlssProfileOptions, onDlssProfileChange,
+      ocSwitchStyle: this.switchStyle(s.overclock, '#00d2ff'), ocKnobStyle: this.knobStyle(s.overclock), toggleOverclock: this.toggleOverclock,
+      fullPcOpen: s.fullPcOpen, toggleFullPc: this.toggleFullPc,
+      fullPcSwitchStyle: this.switchStyle(s.fullPcOpen, '#00d2ff'), fullPcKnobStyle: this.knobStyle(s.fullPcOpen),
+      gpuVram, vramInsufficient, vramThreshold,
+      storageOptions, storageStutterWarning, psuOptions, psuWattage, psuRecommended, psuInsufficient,
+      categoryTabs,
+      benchmarkSearchUrl,
+      dataUpdatedLabel: s.dataUpdatedLabel,
+      cpu: cpu.name, gpu: gpu.name,
+      cpuPrice: cpu.price_usd, gpuPrice: gpu.price_usd,
+      cpuOpen: s.cpuOpen, gpuOpen: s.gpuOpen,
+      cpuChevronTransform: s.cpuOpen ? 'rotate(180deg)' : 'none',
+      gpuChevronTransform: s.gpuOpen ? 'rotate(180deg)' : 'none',
+      cpuQuery: s.cpuQuery, gpuQuery: s.gpuQuery,
+      onCpuQueryChange: (e) => this.setState({ cpuQuery: e.target.value }),
+      onGpuQueryChange: (e) => this.setState({ gpuQuery: e.target.value }),
+      toggleCpuOpen: this.toggleCpuOpen, toggleGpuOpen: this.toggleGpuOpen,
+      filteredCpuList, filteredGpuList,
+      ramOptions, ramId: s.ramId, onRamChange, ramInsufficient, resOptions,
+      gaugeBackground, gaugeGlow, bottleneckColor, bottleneckPercent, bottleneckLabel, bottleneckBadgeBg,
+      gamesComputed,
+      upgradeText,
+      proButtonLabel, proButtonStyle, startProAnalysis: this.startProAnalysis,
+      proModalOpen: s.proModalOpen, closeProModal: this.closeProModal,
+      modalAvgFps: avgFps, modalLow1Fps, modalWattage, modalTemps
+    };
+  }
+}
+
+</script>
+</body>
+</html>
