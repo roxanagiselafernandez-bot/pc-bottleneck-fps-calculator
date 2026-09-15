@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 3,
+  "last_updated": "2026-09-15",
+  "methodology": "Scores 0-100 por resolución, relativos al mejor hardware del catálogo en esa resolución. tdp_watts y price_usd son specs/precios reales de referencia. validation_rules define los umbrales usados por la app para alertas de VRAM/PSU.",
+  "cpus": [
+    {
+      "id": "r5_4500",
+      "name": "AMD Ryzen 5 4500",
+      "score_1080p": 62,
+      "score_1440p": 72,
+      "cores": 6,
+      "threads": 12,
+      "tdp_watts": 65,
+      "price_usd": 75
+    },
+    {
+      "id": "r5_5600",
+      "name": "AMD Ryzen 5 5600",
+      "score_1080p": 80,
+      "score_1440p": 85,
+      "cores": 6,
+      "threads": 12,
+      "tdp_watts": 65,
+      "price_usd": 125
+    },
+    {
+      "id": "r7_5700x3d",
+      "name": "AMD Ryzen 7 5700X3D",
+      "score_1080p": 94,
+      "score_1440p": 96,
+      "cores": 8,
+      "threads": 16,
+      "tdp_watts": 105,
+      "price_usd": 210
+    },
+    {
+      "id": "r7_7800x3d",
+      "name": "AMD Ryzen 7 7800X3D",
+      "score_1080p": 100,
+      "score_1440p": 100,
+      "cores": 8,
+      "threads": 16,
+      "tdp_watts": 120,
+      "price_usd": 380
+    },
+    {
+      "id": "i5_12400f",
+      "name": "Intel Core i5-12400F",
+      "score_1080p": 78,
+      "score_1440p": 83,
+      "cores": 6,
+      "threads": 12,
+      "tdp_watts": 65,
+      "price_usd": 110
+    },
+    {
+      "id": "i5_13600k",
+      "name": "Intel Core i5-13600K",
+      "score_1080p": 93,
+      "score_1440p": 95,
+      "cores": 14,
+      "threads": 20,
+      "tdp_watts": 125,
+      "price_usd": 270
+    },
+    {
+      "id": "i7_14700k",
+      "name": "Intel Core i7-14700K",
+      "score_1080p": 97,
+      "score_1440p": 98,
+      "cores": 20,
+      "threads": 28,
+      "tdp_watts": 125,
+      "price_usd": 390
+    }
+  ],
+  "gpus": [
+    {
+      "id": "rtx_3050_8gb",
+      "name": "NVIDIA GeForce RTX 3050 8GB",
+      "vram_gb": 8,
+      "score_1080p": 55,
+      "score_1440p": 38,
+      "score_4k": 20,
+      "tdp_watts": 130,
+      "price_usd": 190
+    },
+    {
+      "id": "rtx_4060_8gb",
+      "name": "NVIDIA GeForce RTX 4060 8GB",
+      "vram_gb": 8,
+      "score_1080p": 82,
+      "score_1440p": 62,
+      "score_4k": 35,
+      "tdp_watts": 115,
+      "price_usd": 290
+    },
+    {
+      "id": "rtx_4070_12gb",
+      "name": "NVIDIA GeForce RTX 4070 12GB",
+      "vram_gb": 12,
+      "score_1080p": 96,
+      "score_1440p": 90,
+      "score_4k": 68,
+      "tdp_watts": 200,
+      "price_usd": 540
+    },
+    {
+      "id": "rtx_4080_super",
+      "name": "NVIDIA GeForce RTX 4080 Super 16GB",
+      "vram_gb": 16,
+      "score_1080p": 100,
+      "score_1440p": 99,
+      "score_4k": 92,
+      "tdp_watts": 320,
+      "price_usd": 970
+    },
+    {
+      "id": "rx_6600_8gb",
+      "name": "AMD Radeon RX 6600 8GB",
+      "vram_gb": 8,
+      "score_1080p": 68,
+      "score_1440p": 48,
+      "score_4k": 25,
+      "tdp_watts": 132,
+      "price_usd": 200
+    },
+    {
+      "id": "rx_7600_8gb",
+      "name": "AMD Radeon RX 7600 8GB",
+      "vram_gb": 8,
+      "score_1080p": 78,
+      "score_1440p": 56,
+      "score_4k": 30,
+      "tdp_watts": 165,
+      "price_usd": 260
+    },
+    {
+      "id": "rx_7800_xt",
+      "name": "AMD Radeon RX 7800 XT 16GB",
+      "vram_gb": 16,
+      "score_1080p": 94,
+      "score_1440p": 88,
+      "score_4k": 65,
+      "tdp_watts": 263,
+      "price_usd": 490
+    }
+  ],
+  "ram": [
+    {
+      "id": "ddr4_8gb_3200",
+      "name": "8GB DDR4 3200MHz",
+      "type": "DDR4",
+      "capacity_gb": 8,
+      "speed_mhz": 3200,
+      "price_usd": 22
+    },
+    {
+      "id": "ddr4_16gb_3200",
+      "name": "16GB (2x8GB) DDR4 3200MHz",
+      "type": "DDR4",
+      "capacity_gb": 16,
+      "speed_mhz": 3200,
+      "price_usd": 40
+    },
+    {
+      "id": "ddr4_32gb_3600",
+      "name": "32GB (2x16GB) DDR4 3600MHz",
+      "type": "DDR4",
+      "capacity_gb": 32,
+      "speed_mhz": 3600,
+      "price_usd": 75
+    },
+    {
+      "id": "ddr5_16gb_5600",
+      "name": "16GB (2x8GB) DDR5 5600MHz",
+      "type": "DDR5",
+      "capacity_gb": 16,
+      "speed_mhz": 5600,
+      "price_usd": 65
+    },
+    {
+      "id": "ddr5_32gb_6000",
+      "name": "32GB (2x16GB) DDR5 6000MHz CL30",
+      "type": "DDR5",
+      "capacity_gb": 32,
+      "speed_mhz": 6000,
+      "price_usd": 110
+    }
+  ],
+  "storage": [
+    {
+      "id": "hdd_1tb",
+      "name": "HDD 1TB 7200 RPM",
+      "type": "HDD",
+      "stutter_warning": true,
+      "speed_mbps": 150,
+      "price_usd": 40
+    },
+    {
+      "id": "ssd_sata_1tb",
+      "name": "SSD SATA III 1TB",
+      "type": "SATA_SSD",
+      "stutter_warning": false,
+      "speed_mbps": 550,
+      "price_usd": 60
+    },
+    {
+      "id": "ssd_nvme_gen4_1tb",
+      "name": "SSD M.2 NVMe Gen4 1TB",
+      "type": "NVME_SSD",
+      "stutter_warning": false,
+      "speed_mbps": 7000,
+      "price_usd": 85
+    }
+  ],
+  "validation_rules": {
+    "min_psu_headroom_watts": 100,
+    "vram_warning_4k_threshold_gb": 10,
+    "vram_warning_1440p_threshold_gb": 8
+  }
+}
