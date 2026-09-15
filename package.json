@@ -1,0 +1,10 @@
+{
+  "name": "pc-bottleneck-fps-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calculadora de cuello de botella y FPS con datos reales de hardware, actualizados semanalmente.",
+  "type": "module",
+  "scripts": {
+    "update-hardware": "node scripts/update-hardware.mjs"
+  }
+}
