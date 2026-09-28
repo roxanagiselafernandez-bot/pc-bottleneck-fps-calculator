@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "last_updated": "2026-09-21",
+  "last_updated": "2026-09-28",
   "methodology": "Scores 0-100 por resolución, relativos al mejor hardware del catálogo en esa resolución. tdp_watts y price_usd son specs/precios reales de referencia. validation_rules define los umbrales usados por la app para alertas de VRAM/PSU.",
   "cpus": [
     {
