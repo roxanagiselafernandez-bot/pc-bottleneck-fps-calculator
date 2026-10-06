@@ -13,6 +13,7 @@ Calculadora de cuello de botella CPU/GPU y estimación de FPS, con un catálogo 
 - `support.js` — runtime del formato `.dc.html` (generado, no editar a mano).
 - `hardware.json` — catálogo completo (cpus, gpus, ram, storage, validation_rules). La app lo descarga en cada carga (`fetch`), con fallback a los datos embebidos en el HTML si la red falla.
 - `scripts/update-hardware.mjs` — valida la integridad del catálogo (ids únicos, scores en rango, specs presentes) y actualiza `last_updated`. Corre semanalmente vía GitHub Actions.
+- `video/` — proyecto Remotion aparte con plantillas de reels (promo y subtítulos animados) para vender edición de video. Ver `video/README.md`.
 - `.github/workflows/update-hardware.yml` — corre el script todos los lunes y commitea los cambios automáticamente.
 
 ## Metodología y limitaciones (leer antes de confiar ciegamente en los números)
